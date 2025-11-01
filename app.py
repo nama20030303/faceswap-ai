@@ -11,8 +11,19 @@ import os
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Создаем Flask приложение с исправлением для Codespaces
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
+
+# Исправление для GitHub Codespaces
+app.config['PREFERRED_URL_SCHEME'] = 'https'
+app.config['SERVER_NAME'] = None
+
+@app.after_request
+def after_request(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    return response
 
 # Глобальные переменные для моделей
 face_app = None
@@ -142,4 +153,5 @@ def process():
 
 if __name__ == '__main__':
     logger.info("🚀 Запуск Flask приложения...")
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    # Исправление для Codespaces
+    app.run(host='0.0.0.0', port=5000, debug=False, ssl_context='adhoc')
